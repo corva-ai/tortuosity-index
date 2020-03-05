@@ -111,6 +111,11 @@ class TortuosityIndex:
 
 def compute_scaling_factor(distance: float) -> float:
     """
+    The scaling factor concept idea is from the following paper:
+    "Baumgartner, T., Lin, C., Liu, Y., Mendonsa, A., & Zimpfer, D. (2019, March).
+    Using Big Data to Study the Impact of Wellbore Tortuosity on Drilling, Completions,
+    and Production Performance. In SPE/IADC International Drilling Conference and Exhibition.
+    Society of Petroleum Engineers."
 
     :param distance: , [ft]
     :return:
