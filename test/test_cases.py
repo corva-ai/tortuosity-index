@@ -1,5 +1,7 @@
 import unittest
 import json
+from typing import List
+
 import numpy as np
 
 from tortuosity import TortuosityIndex
@@ -8,19 +10,19 @@ from functions import angle_difference, distance
 
 class Test(unittest.TestCase):
     def test1(self):
-
-        file_path = r"../resources/sample_survey.json"
+        file_path = r"../resources/SampleSurvey.csv"
         print("State path: ", file_path)
         with open(file_path) as file:
-            stations_json = json.load(file)
+            lines = file.readlines()
+            lines = lines[1:]  # removing the header row
 
             tortuosity = TortuosityIndex()
-            tortuosity.set_stations_by_json(stations_json)
+            tortuosity.set_stations(lines)
             df = tortuosity.process()
 
             if df is not None:
-                file_name = f"TortuasityIndexResults.csv"
-                df.to_csv(file_name, columns=['md', 'inc', 'azi', 'x', 'y', 'z', 'vs', 'is_inflection', 'ti', 'total_ti'])
+                file_name = f"../resources/TortuasityIndexResults.csv"
+                df.to_csv(file_name, columns=['md', 'inc', 'azi', 'x', 'y', 'z', 'is_inflection', 'ti', 'total_ti'])
 
                 with open(file_name, "a") as the_file:
                     the_file.write(f"\nFinal Tortuosity Index: {round(tortuosity.final_tortuosity_index, 2)}")
