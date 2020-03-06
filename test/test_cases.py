@@ -22,7 +22,7 @@ class Test(unittest.TestCase):
 
             if df is not None:
                 file_name = f"../resources/TortuasityIndexResults.csv"
-                df.to_csv(file_name, columns=['md', 'inc', 'azi', 'x', 'y', 'z', 'is_inflection', 'ti', 'total_ti'])
+                df.to_csv(file_name, columns=['md', 'inc', 'azi', 'x', 'y', 'z', 'is_inflection', 'ti', 'cumulative_ti'])
 
                 with open(file_name, "a") as the_file:
                     the_file.write(f"\nFinal Tortuosity Index: {round(tortuosity.final_tortuosity_index, 2)}")

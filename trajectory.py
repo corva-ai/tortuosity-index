@@ -15,7 +15,7 @@ class Station:
         self.z = None
         self.is_inflection = False
         self.ti = 0  # single TI
-        self.total_ti = None  # TI till this station
+        self.cumulative_ti = None  # TI till this station
 
     def set_data(self, data):
         self.md = data[0]  # "measured_depth"
@@ -48,7 +48,7 @@ class Station:
             'z': self.z,
             'is_inflection': self.is_inflection,
             'ti': self.ti,
-            'total_ti': self.total_ti
+            'cumulative_ti': self.cumulative_ti
         }
 
 

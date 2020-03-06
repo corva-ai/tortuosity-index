@@ -42,11 +42,11 @@ class TortuosityIndex:
         # indices of the inflection points
         inflection_indices = []
         # not including the first and last elements, this is the middle point for every 3 stations
-        for idx in range(1, len(self.stations) - 1):
-            is_inflection = find_inflection(self.stations[idx - 1: idx + 2])
-            self.stations[idx].is_inflection = is_inflection
+        for index in range(1, len(self.stations) - 1):
+            is_inflection = find_inflection(self.stations[index - 1: index + 2])
+            self.stations[index].is_inflection = is_inflection
             if is_inflection:
-                inflection_indices.append(idx)
+                inflection_indices.append(index)
 
         if not inflection_indices:
             print("Strange, no inflection point.")
@@ -56,27 +56,33 @@ class TortuosityIndex:
         inflection_indices = [0] + inflection_indices + [len(self.stations) - 1]
         self.stations[0].is_inflection = True
         self.stations[-1].is_inflection = True
-        print("Inflection points indices: ", inflection_indices)
 
-        for idx in inflection_indices[1:]:
-            calculate_and_set_single_tortuosity(self.stations[idx - 1], self.stations[idx])
+        for index in inflection_indices[1:]:
+            calculate_and_set_single_tortuosity(self.stations[index - 1], self.stations[index])
 
         df = pd.DataFrame.from_records([s.to_dict() for s in self.stations])
 
         df['total_ti'] = 0
         last_total_ti = 0
-        for idx, row in df.iterrows():
+        for index, row in df.iterrows():
             if row['is_inflection']:
-                n = sum(df.iloc[0:idx+1]['is_inflection']) - 1
-                if n >= 1:
-                    Lc = df.iloc[idx].md - df.iloc[0].md
-                    sum_tis = sum(df.iloc[0:idx + 1]['ti'])
-                    if sum_tis > 0:
-                        f_SF = self.compute_survey_frequency_scaling_factor(max_index=idx)
-                        last_total_ti = f_SF * Lc ** 2 * ((n - 1) / n) * (1 / Lc) * sum_tis
-                    print(f"Tortuosity Index at {round(self.stations[idx].md, 2)} ft: {round(last_total_ti, 2)}")
+                # number of inflection points from surface to the current point
+                n_inflections = sum(df.iloc[0:index+1]['is_inflection']) - 1
+                if n_inflections >= 1:
+                    # measured depth from surface to the current station; usually equal to the measured depth
+                    # of the current station since the first station md is 0
+                    Lc = df.iloc[index].md - df.iloc[0].md
 
-            df.loc[idx, 'total_ti'] = last_total_ti
+                    # sum of individual tortuosity indices from surface to the current station
+                    sum_tis = sum(df.iloc[0:index + 1]['ti'])
+                    if sum_tis > 0:
+                        # computing the surveying frequency scaling factor
+                        f_SF = self.compute_survey_frequency_scaling_factor(max_index=index)
+
+                        # modified tortuosity index equation
+                        last_total_ti = f_SF * Lc ** 2 * ((n_inflections - 1) / n_inflections) * (1 / Lc) * sum_tis
+
+            df.loc[index, 'cumulative_ti'] = last_total_ti
 
         self.final_tortuosity_index = last_total_ti
 
