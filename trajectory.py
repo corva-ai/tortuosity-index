@@ -13,19 +13,17 @@ class Station:
         self.x = None
         self.y = None
         self.z = None
-        self.vs = None
         self.is_inflection = False
         self.ti = 0  # single TI
-        self.total_ti = None  # TI till this station
+        self.cumulative_ti = None  # TI till this station
 
-    def set_data(self, data: dict):
-        self.md = data["measured_depth"]
-        self.inc = data["inclination"]
-        self.azi = data["azimuth"]
-        self.x = data["northing"]
-        self.y = data["easting"]
-        self.z = data["tvd"]
-        self.vs = data.get("vertical_section", None)
+    def set_data(self, data):
+        self.md = data[0]  # "measured_depth"
+        self.inc = data[1]  # "inclination"
+        self.azi = data[2]  # "azimuth"
+        self.x = data[3]  # "northing"
+        self.y = data[4]  # "easting"
+        self.z = data[5]  # "tvd"
 
     def _get_3d_point(self):
         return np.array([self.x, self.y, self.z])
@@ -48,10 +46,9 @@ class Station:
             'x': self.x,
             'y': self.y,
             'z': self.z,
-            'vs': self.vs,
             'is_inflection': self.is_inflection,
             'ti': self.ti,
-            'total_ti': self.total_ti
+            'cumulative_ti': self.cumulative_ti
         }
 
 
